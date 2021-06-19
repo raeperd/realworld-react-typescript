@@ -29,6 +29,17 @@
       "react-app/jest"
     ]
   },
+  "lint-staged": {
+    "*.{js, jsx, ts, tsx}": [
+      "eslint . --fix",
+      "prettier --write"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -53,6 +64,8 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4",
+    "husky": "^6.0.0",
+    "lint-staged": "^11.0.0",
     "prettier": "^2.3.1"
   }
 }
