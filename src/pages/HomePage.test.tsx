@@ -38,6 +38,12 @@ describe('HomeFeedToggle', () => {
   });
 });
 
+test('when render expect HomeArticlePreview to be in the document', () => {
+  render(<HomePage />);
+
+  expect(screen.getAllByText('Read more...')[0]).toBeInTheDocument();
+});
+
 /* eslint-disable @typescript-eslint/no-namespace */
 declare global {
     namespace jest {
