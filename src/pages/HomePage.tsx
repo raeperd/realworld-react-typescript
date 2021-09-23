@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '../components/Layout';
 
 const HomePage = () => (
@@ -8,16 +8,7 @@ const HomePage = () => (
       <div className="container page">
         <div className="row">
           <div className="col-md-9">
-            <div className="feed-toggle">
-              <ul className="nav nav-pills outline-active">
-                <li className="nav-item">
-                  <a className="nav-link disabled" href="index.html">Your Feed</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link active" href="index.html">Global Feed</a>
-                </li>
-              </ul>
-            </div>
+            <HomeFeedToggle />
           </div>
           <div className="col-md-3">
             <HomeSideBar />
@@ -36,6 +27,39 @@ const HomePageBanner = () => (
     </div>
   </div>
 );
+
+const HomeFeedToggle = () => {
+  const [toogleActivated, setToggleActivated] = useState<HomeFeedToggleItem>('Global Feed');
+
+  const NavigationItem = ({ toggle }: {toggle: HomeFeedToggleItem}) => {
+    const navLinkItemName = (activated: boolean) => (
+      activated ? 'nav-link active' : 'nav-link disabled'
+    );
+
+    return (
+      <li className="nav-item">
+        <button
+          type="button"
+          className={navLinkItemName(toggle === toogleActivated)}
+          onClick={() => setToggleActivated(toggle)}
+        >
+          {toggle}
+        </button>
+      </li>
+    );
+  };
+
+  type HomeFeedToggleItem = 'Your Feed' | 'Global Feed';
+
+  return (
+    <div className="feed-toggle">
+      <ul className="nav nav-pills outline-active">
+        <NavigationItem toggle="Your Feed" />
+        <NavigationItem toggle="Global Feed" />
+      </ul>
+    </div>
+  );
+};
 
 const HomeSideBar = () => (
   <div className="sidebar">
