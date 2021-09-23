@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, NavLink } from 'react-router-dom';
 
 const Layout = ({ children }: { children: React.ReactNode }) => (
   <>
@@ -11,20 +12,20 @@ const Layout = ({ children }: { children: React.ReactNode }) => (
 const Header = () => (
   <nav className="navbar navbar-light">
     <div className="container">
-      <a className="navbar-brand" href="index.html">conduit</a>
+      <Link className="navbar-brand" to="/">conduit</Link>
       <ul className="nav navbar-nav pull-xs-right">
-        <li className="nav-item">
-          <a className="nav-link active" href="index.html">Home</a>
-        </li>
-        <li className="nav-item">
-          <a className="nav-link" href="index.html">Sign in</a>
-        </li>
-        <li className="nav-item">
-          <a className="nav-link" href="index.html">Sign up</a>
-        </li>
+        <NavLinkListItem to="/">Home</NavLinkListItem>
+        <NavLinkListItem to="/login">Sign in</NavLinkListItem>
+        <NavLinkListItem to="/register">Sign up</NavLinkListItem>
       </ul>
     </div>
   </nav>
+);
+
+const NavLinkListItem = ({ to, children }: {to: string, children: string}) => (
+  <li className="nav-item">
+    <NavLink className="nav-link" activeClassName="nav-link active" exact to={to}>{children}</NavLink>
+  </li>
 );
 
 const Footer = () => (

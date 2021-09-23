@@ -1,24 +1,21 @@
 import React, { useState } from 'react';
-import Layout from '../components/Layout';
 
 const HomePage = () => (
-  <Layout>
-    <div className="home-page">
-      <HomePageBanner />
-      <div className="container page">
-        <div className="row">
-          <div className="col-md-9">
-            <HomeFeedToggle />
-            <HomeArticlePreview />
-            <HomeArticlePreview />
-          </div>
-          <div className="col-md-3">
-            <HomeSideBar />
-          </div>
+  <div className="home-page">
+    <HomePageBanner />
+    <div className="container page">
+      <div className="row">
+        <div className="col-md-9">
+          <HomeFeedToggle />
+          <HomeArticlePreview />
+          <HomeArticlePreview />
+        </div>
+        <div className="col-md-3">
+          <HomeSideBar />
         </div>
       </div>
     </div>
-  </Layout>
+  </div>
 );
 
 const HomePageBanner = () => (
