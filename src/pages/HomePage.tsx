@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const HomePage = () => (
+export default () => (
   <div className="home-page">
     <HomePageBanner />
     <div className="container page">
@@ -17,6 +17,8 @@ const HomePage = () => (
     </div>
   </div>
 );
+
+export const HOME_PAGE_PATH = '/';
 
 const HomePageBanner = () => (
   <div className="banner">
@@ -98,5 +100,3 @@ const HomeSideBar = () => (
     </div>
   </div>
 );
-
-export default HomePage;
