@@ -28,7 +28,8 @@
         "tsx": "never"
       }
     ],
-    "react/jsx-filename-extension": ["warn", { "extensions": [".tsx"] }]
+    "react/jsx-filename-extension": ["warn", { "extensions": [".tsx"] }],
+    "react/require-default-props": "off"
   },
   "settings": {
     "import/resolver": {

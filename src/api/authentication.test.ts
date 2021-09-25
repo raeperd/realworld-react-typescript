@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import { AxiosResponse } from 'axios';
 import axios from './axiosClient';
-import { login, User } from './authentication';
+import { login, signUp, User } from './authentication';
 
 jest.mock('./axiosClient');
 const axiosMocked = axios as jest.Mocked<typeof axios>;
@@ -16,7 +15,7 @@ describe('login', () => {
 
     return login(userMock.email, 'password')
       .then(() => {
-        expect(axiosMocked.post.mock.calls[0][0]).toBe('/users/login');
+        expect(axiosMocked.post).toBeCalledWith('/users/login', expect.anything());
       });
   });
 
@@ -25,6 +24,30 @@ describe('login', () => {
     expect(window.localStorage.getItem('user-key')).toBe(null);
 
     return login(userMock.email, 'password')
+      .then(() => {
+        expect(window.localStorage.getItem('user-key')).toBe(JSON.stringify(userMock));
+      });
+  });
+});
+
+describe('signUp', () => {
+  afterEach(() => {
+    window.localStorage.clear();
+  });
+
+  test('when signUp expect post with url', () => {
+    axiosMocked.post.mockResolvedValue(axiosResponse);
+
+    return signUp({ email: userMock.email, username: userMock.username, password: '' })
+      .then(() => {
+        expect(axiosMocked.post).toBeCalledWith('/users', expect.anything());
+      });
+  });
+
+  test('when signUp expect user saved', () => {
+    axiosMocked.post.mockResolvedValue(axiosResponse);
+
+    return signUp({ email: userMock.email, username: userMock.username, password: '' })
       .then(() => {
         expect(window.localStorage.getItem('user-key')).toBe(JSON.stringify(userMock));
       });
