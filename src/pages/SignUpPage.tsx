@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import {
-  FormContainer,
-  FormErrorMessage, FormInput,
-} from '../components/FormContainer';
+import { FormContainer, FormErrorMessage, FormInput } from '../components/FormContainer';
 import useForm from '../components/hooks/useForm';
 import { signUp } from '../api/authentication';
 import { HOME_PAGE_PATH } from './HomePage';
@@ -13,6 +10,8 @@ export default () => (
     <SignUpForm />
   </FormContainer>
 );
+
+export const SIGNUP_PAGE_PATH = '/register';
 
 const SignUpForm = () => {
   const { handleSubmit, handleChange, values } = useForm({
@@ -40,5 +39,3 @@ const SignUpForm = () => {
     </form>
   );
 };
-
-export const SIGNUP_PAGE_PATH = '/register';
