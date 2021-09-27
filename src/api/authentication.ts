@@ -1,14 +1,26 @@
 import axios from './axiosClient';
 
-export async function login(email: string, password: string): Promise<User> {
-  return axios.post<User>('/users/login', { user: { email, password } })
-    .then((response) => saveUser(response.data));
-}
+export const login = (email: string, password: string) => (
+  axios.post<User>('/users/login', { user: { email, password } }))
+  .then((response) => response.data);
 
-export async function signUp({ email, username, password }: SignUpParam): Promise<User> {
-  return axios.post<User>('/users', { user: { email, username, password } })
-    .then((response) => saveUser(response.data));
-}
+export const signUp = ({ email, username, password }: SignUpParam) => (
+  axios.post<User>('/users', { user: { email, username, password } })
+    .then((response) => response.data)
+);
+
+export const saveUser = (user: User) => {
+  window.localStorage.setItem(USER_KEY, JSON.stringify(user));
+  return user;
+};
+
+export const getCurrentUserOrNull = () => {
+  const userOrNull = window.localStorage.getItem(USER_KEY);
+  if (userOrNull === null) {
+    return null;
+  }
+  return JSON.parse(userOrNull) as User;
+};
 
 export interface User {
     email: string,
@@ -22,10 +34,5 @@ export interface SignUpParam {
   username: string,
   password: string
 }
-
-const saveUser = (user: User) => {
-  window.localStorage.setItem(USER_KEY, JSON.stringify(user));
-  return user;
-};
 
 const USER_KEY = 'user-key';

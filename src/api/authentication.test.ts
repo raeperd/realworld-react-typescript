@@ -1,15 +1,13 @@
 import { AxiosResponse } from 'axios';
 import axios from './axiosClient';
-import { login, signUp, User } from './authentication';
+import {
+  getCurrentUserOrNull, login, saveUser, signUp, User,
+} from './authentication';
 
 jest.mock('./axiosClient');
 const axiosMocked = axios as jest.Mocked<typeof axios>;
 
 describe('login', () => {
-  afterEach(() => {
-    window.localStorage.clear();
-  });
-
   test('when login expect post with url', () => {
     axiosMocked.post.mockResolvedValue(axiosResponse);
 
@@ -18,23 +16,9 @@ describe('login', () => {
         expect(axiosMocked.post).toBeCalledWith('/users/login', expect.anything());
       });
   });
-
-  test('when login expect user saved', () => {
-    axiosMocked.post.mockResolvedValue(axiosResponse);
-    expect(window.localStorage.getItem('user-key')).toBe(null);
-
-    return login(userMock.email, 'password')
-      .then(() => {
-        expect(window.localStorage.getItem('user-key')).toBe(JSON.stringify(userMock));
-      });
-  });
 });
 
 describe('signUp', () => {
-  afterEach(() => {
-    window.localStorage.clear();
-  });
-
   test('when signUp expect post with url', () => {
     axiosMocked.post.mockResolvedValue(axiosResponse);
 
@@ -43,14 +27,19 @@ describe('signUp', () => {
         expect(axiosMocked.post).toBeCalledWith('/users', expect.anything());
       });
   });
+});
 
-  test('when signUp expect user saved', () => {
-    axiosMocked.post.mockResolvedValue(axiosResponse);
+describe('saveUser', () => {
+  afterEach(() => {
+    window.localStorage.clear();
+  });
 
-    return signUp({ email: userMock.email, username: userMock.username, password: '' })
-      .then(() => {
-        expect(window.localStorage.getItem('user-key')).toBe(JSON.stringify(userMock));
-      });
+  test('when save user expect getCurrentUserOrNull return not null', () => {
+    expect(getCurrentUserOrNull()).toBeNull();
+
+    saveUser(userMock);
+
+    expect(getCurrentUserOrNull()).not.toBeNull();
   });
 });
 

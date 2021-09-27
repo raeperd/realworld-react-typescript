@@ -1,30 +1,27 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { login } from '../api/authentication';
-import { HOME_PAGE_PATH } from './HomePage';
+import { login, User } from '../api/authentication';
 import useForm from '../components/hooks/useForm';
 import { FormContainer, FormErrorMessage, FormInput } from '../components/FormContainer';
 
-export default () => (
+export default ({ onLoginSuccess }: {onLoginSuccess: (user: User) => void}) => (
   <FormContainer title="Sign in">
-    <LoginForm />
+    <LoginForm onLoginSuccess={onLoginSuccess} />
   </FormContainer>
 );
 
 export const LOGIN_PAGE_PATH = '/login';
 
-const LoginForm = () => {
+const LoginForm = ({ onLoginSuccess }: {onLoginSuccess: (user: User) => void}) => {
   const { handleSubmit, handleChange, values } = useForm({
     email: '',
     password: '',
   }, onSubmitCallBack);
 
   const [isError, setIsError] = useState(false);
-  const history = useHistory();
 
   async function onSubmitCallBack() {
     await login(values.email, values.password)
-      .then(() => history.push(HOME_PAGE_PATH))
+      .then((user) => onLoginSuccess(user))
       .catch(() => setIsError(true));
   }
 

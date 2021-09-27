@@ -8,14 +8,20 @@ import SettingsPage, { SETTINGS_PAGE_PATH } from '../pages/SettingsPage';
 import Home, { HOME_PAGE_PATH } from '../pages/HomePage';
 import LoginPage, { LOGIN_PAGE_PATH } from '../pages/LogInPage';
 import SignUpPage, { SIGNUP_PAGE_PATH } from '../pages/SignUpPage';
+import { getCurrentUserOrNull, saveUser, User } from '../api/authentication';
 
 export default () => {
-  const [isUserLoggedIn] = useState(false);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(() => getCurrentUserOrNull() !== null);
+
+  const handleLoginSuccess = (user: User) => {
+    setIsUserLoggedIn(true);
+    saveUser(user);
+  };
 
   return (
     <>
       <Header isUserLoggedIn={isUserLoggedIn} />
-      <Body isUserLoggedIn={isUserLoggedIn} />
+      <Body isUserLoggedIn={isUserLoggedIn} onLoginSuccess={handleLoginSuccess} />
     </>
   );
 };
@@ -34,13 +40,16 @@ const Header = ({ isUserLoggedIn }: { isUserLoggedIn: boolean }) => (
   </nav>
 );
 
-const Body = ({ isUserLoggedIn }: {isUserLoggedIn: boolean}) => (
-  <Switch>
-    <Route exact path={HOME_PAGE_PATH}>
-      <Home />
-    </Route>
-    {isUserLoggedIn ? <AuthorizedBodies /> : <UnAuthorizedBodies />}
-  </Switch>
+const Body = ({ isUserLoggedIn, onLoginSuccess }:
+  {isUserLoggedIn: boolean, onLoginSuccess: (user: User) => void}) => (
+    <Switch>
+      <Route exact path={HOME_PAGE_PATH}>
+        <Home />
+      </Route>
+      {isUserLoggedIn
+        ? <AuthorizedBodies />
+        : <UnAuthorizedBodies onLoginSuccess={onLoginSuccess} />}
+    </Switch>
 );
 
 const AuthorizedBodies = () => (
@@ -55,13 +64,13 @@ const AuthorizedBodies = () => (
   </Switch>
 );
 
-const UnAuthorizedBodies = () => (
+const UnAuthorizedBodies = ({ onLoginSuccess }: {onLoginSuccess: (user: User) => void}) => (
   <Switch>
     <Route path={LOGIN_PAGE_PATH}>
-      <LoginPage />
+      <LoginPage onLoginSuccess={onLoginSuccess} />
     </Route>
     <Route path={SIGNUP_PAGE_PATH}>
-      <SignUpPage />
+      <SignUpPage onSignUpSuccess={onLoginSuccess} />
     </Route>
   </Switch>
 );

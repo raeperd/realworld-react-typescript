@@ -2,26 +2,23 @@ import React from 'react';
 import {
   fireEvent, render, screen, waitFor,
 } from '@testing-library/react';
-import { createMemoryHistory, MemoryHistory } from 'history';
-import { Router } from 'react-router-dom';
 import LogInPage from './LogInPage';
 import { login, User } from '../api/authentication';
-import { HOME_PAGE_PATH } from './HomePage';
 
 test('when render expect form with placeholders', () => {
-  render(<LogInPage />);
+  render(<LogInPage onLoginSuccess={onLoginSuccessMock} />);
 
   expectPlaceHoldersToBeInTheDocument('Email', 'Password');
 });
 
 test('when render expect password form input to have attribute type password', () => {
-  const { getByPlaceholderText } = render(<LogInPage />);
+  const { getByPlaceholderText } = render(<LogInPage onLoginSuccess={onLoginSuccessMock} />);
 
   expect(getByPlaceholderText('Password')).toHaveAttribute('type', 'password');
 });
 
 test('when click button expect login with values', () => {
-  renderWithHistory(<LogInPage />, createMemoryHistory());
+  render(<LogInPage onLoginSuccess={onLoginSuccessMock} />);
   loginMock.mockResolvedValueOnce(userMocked);
 
   submitFormWith({ email: 'user@email.com', password: 'password' });
@@ -30,39 +27,43 @@ test('when click button expect login with values', () => {
 });
 
 test('when login failed expect error message', () => {
-  const { queryByText, getByText } = render(<LogInPage />);
+  const { queryByText, getByText } = render(<LogInPage onLoginSuccess={onLoginSuccessMock} />);
   expect(queryByText('Login Failed')).not.toBeInTheDocument();
-
   loginMock.mockRejectedValue(new Error());
+
   submitForm();
 
   return waitFor(() => expect(getByText('Login Failed')).toBeInTheDocument());
 });
 
-test('when login success expect history to have homepage path', () => {
-  const history = createMemoryHistory();
-  renderWithHistory(<LogInPage />, history);
+test('when login failed expect onLoginSuccess not called', () => {
+  render(<LogInPage onLoginSuccess={onLoginSuccessMock} />);
+  loginMock.mockRejectedValue(new Error());
 
-  loginMock.mockResolvedValueOnce(userMocked);
   submitForm();
 
-  expect(history.location.pathname).toBe(HOME_PAGE_PATH);
+  return waitFor(() => expect(onLoginSuccessMock).not.toBeCalled());
+});
+
+test('when login success expect onLoginSuccessMock called', () => {
+  render(<LogInPage onLoginSuccess={onLoginSuccessMock} />);
+  loginMock.mockResolvedValueOnce(userMocked);
+
+  submitForm();
+
+  return waitFor(() => expect(onLoginSuccessMock).toBeCalledWith(userMocked));
 });
 
 jest.mock('../api/authentication');
 const loginMock = login as jest.MockedFunction<typeof login>;
+
+const onLoginSuccessMock = jest.fn();
 
 export const expectPlaceHoldersToBeInTheDocument = (...args: string[]) => {
   args.forEach(
     (placeHolder) => expect(screen.getByPlaceholderText(placeHolder)).toBeInTheDocument(),
   );
 };
-
-export const renderWithHistory = (reactNode: React.ReactNode, history: MemoryHistory) => render(
-  <Router history={history}>
-    {reactNode}
-  </Router>,
-);
 
 export const submitForm = () => fireEvent.click(screen.getByRole('button'));
 

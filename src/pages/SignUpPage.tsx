@@ -1,19 +1,17 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import { FormContainer, FormErrorMessage, FormInput } from '../components/FormContainer';
 import useForm from '../components/hooks/useForm';
-import { signUp } from '../api/authentication';
-import { HOME_PAGE_PATH } from './HomePage';
+import { signUp, User } from '../api/authentication';
 
-export default () => (
+export default ({ onSignUpSuccess }: {onSignUpSuccess: (user: User) => void }) => (
   <FormContainer title="Sign Up">
-    <SignUpForm />
+    <SignUpForm onSignUpSuccess={onSignUpSuccess} />
   </FormContainer>
 );
 
 export const SIGNUP_PAGE_PATH = '/register';
 
-const SignUpForm = () => {
+const SignUpForm = ({ onSignUpSuccess }: {onSignUpSuccess: (user: User) => void }) => {
   const { handleSubmit, handleChange, values } = useForm({
     email: '',
     username: '',
@@ -21,11 +19,10 @@ const SignUpForm = () => {
   }, onSubmitCallBack);
 
   const [isError, setIsError] = useState(false);
-  const history = useHistory();
 
   async function onSubmitCallBack() {
     await signUp(values)
-      .then(() => history.push(HOME_PAGE_PATH))
+      .then(onSignUpSuccess)
       .catch(() => setIsError(true));
   }
 

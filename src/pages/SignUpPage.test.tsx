@@ -1,38 +1,36 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
-import { createMemoryHistory } from 'history';
 import SignUpPage from './SignUpPage';
 import {
   expectPlaceHoldersToBeInTheDocument,
   inputTextByPlaceHolderText,
-  renderWithHistory, submitForm,
+  submitForm,
 } from './LoginPage.test';
 import { signUp, SignUpParam, User } from '../api/authentication';
-import { HOME_PAGE_PATH } from './HomePage';
 
 test('when render expect form with placeholders', () => {
-  render(<SignUpPage />);
+  render(<SignUpPage onSignUpSuccess={onSignUpSuccessMocked} />);
 
   expectPlaceHoldersToBeInTheDocument('Email', 'Your Name', 'Password');
 });
 
 test('when render expect password form input to have attribute type password', () => {
-  const { getByPlaceholderText } = render(<SignUpPage />);
+  const { getByPlaceholderText } = render(<SignUpPage onSignUpSuccess={onSignUpSuccessMocked} />);
 
   expect(getByPlaceholderText('Password')).toHaveAttribute('type', 'password');
 });
 
 test('when submit expect signUp with values', () => {
-  renderWithHistory(<SignUpPage />, createMemoryHistory());
+  render(<SignUpPage onSignUpSuccess={onSignUpSuccessMocked} />);
   signUpMocked.mockResolvedValueOnce(userMocked);
 
   submitFormWith(signUpParamMocked);
 
-  expect(signUpMocked).toBeCalledWith(signUpParamMocked);
+  return waitFor(() => expect(signUpMocked).toBeCalledWith(signUpParamMocked));
 });
 
-test('when submit failed expect error message', () => {
-  renderWithHistory(<SignUpPage />, createMemoryHistory());
+test('when signUp failed expect error message', () => {
+  render(<SignUpPage onSignUpSuccess={onSignUpSuccessMocked} />);
   signUpMocked.mockRejectedValueOnce(new Error('Error'));
 
   submitForm();
@@ -40,18 +38,27 @@ test('when submit failed expect error message', () => {
   return waitFor(() => expect(screen.getByText('Register Failed')).toBeInTheDocument());
 });
 
-test('when login success expect history to have homepage path', () => {
-  const history = createMemoryHistory();
-  renderWithHistory(<SignUpPage />, history);
-  signUpMocked.mockResolvedValueOnce(userMocked);
+test('when signUp failed expect onSignUpSuccess not called', () => {
+  render(<SignUpPage onSignUpSuccess={onSignUpSuccessMocked} />);
+  signUpMocked.mockRejectedValueOnce(new Error('Error'));
 
   submitForm();
 
-  return waitFor(() => expect(history.location.pathname).toBe(HOME_PAGE_PATH));
+  return waitFor(() => expect(onSignUpSuccessMocked).not.toBeCalled());
+});
+
+test('when signUp success expect onSignUpSuccess called', () => {
+  render(<SignUpPage onSignUpSuccess={onSignUpSuccessMocked} />);
+  signUpMocked.mockResolvedValueOnce(userMocked);
+
+  submitFormWith(signUpParamMocked);
+
+  return waitFor(() => expect(onSignUpSuccessMocked).toBeCalledWith(userMocked));
 });
 
 jest.mock('../api/authentication');
 const signUpMocked = signUp as jest.MockedFunction<typeof signUp>;
+const onSignUpSuccessMocked = jest.fn();
 
 const submitFormWith = (param: SignUpParam) => {
   inputTextByPlaceHolderText('Email', param.email);
