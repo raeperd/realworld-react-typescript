@@ -1,37 +1,43 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import HomePage from './HomePage';
+import { User } from '../api/authentication';
 
 test('when render expect Banner to be in the document', () => {
-  render(<HomePage />);
+  const { getByText } = render(<HomePage userLoggedIn={null} />);
 
-  expect(screen.getByText('A place to share your knowledge.')).toBeInTheDocument();
+  expect(getByText('A place to share your knowledge.')).toBeInTheDocument();
 });
 
 test('when render expect SideBar to be in the document', () => {
-  render(<HomePage />);
+  const { getByText } = render(<HomePage userLoggedIn={null} />);
 
-  expect(screen.getByText('Popular Tags')).toBeInTheDocument();
+  expect(getByText('Popular Tags')).toBeInTheDocument();
 });
 
 describe('HomeFeedToggle', () => {
-  test('when render expect HomeFeedToggle to be in the document', () => {
-    render(<HomePage />);
+  test('when render without logged in expect no Your Feed', () => {
+    const { queryByText } = render(<HomePage userLoggedIn={null} />);
 
-    expect(screen.getByText('Your Feed')).toBeInTheDocument();
-    expect(screen.getByText('Global Feed')).toBeInTheDocument();
+    expect(queryByText('Your Feed')).not.toBeInTheDocument();
   });
 
   test('when render expect Global Feed is focused', () => {
-    render(<HomePage />);
+    render(<HomePage userLoggedIn={null} />);
 
     expect('Global Feed').toBeActivatedNavItem();
+  });
+
+  test('when render with user expect Your Feed to be in the document', () => {
+    render(<HomePage userLoggedIn={userMocked} />);
+
     expect('Your Feed').toBeDisabledNavItem();
+    expect('Global Feed').toBeActivatedNavItem();
   });
 
   test('when click button expect activated feed changed', () => {
-    render(<HomePage />);
-    fireEvent.click(screen.getByText('Your Feed'));
+    const { getByText } = render(<HomePage userLoggedIn={userMocked} />);
+    fireEvent.click(getByText('Your Feed'));
 
     expect('Global Feed').toBeDisabledNavItem();
     expect('Your Feed').toBeActivatedNavItem();
@@ -39,7 +45,7 @@ describe('HomeFeedToggle', () => {
 });
 
 test('when render expect HomeArticlePreview to be in the document', () => {
-  render(<HomePage />);
+  render(<HomePage userLoggedIn={null} />);
 
   expect(screen.getAllByText('Read more...')[0]).toBeInTheDocument();
 });
@@ -58,8 +64,8 @@ expect.extend({
   toBeActivatedNavItem(received: 'Your Feed' | 'Global Feed') {
     switch (screen.getByText(received).className) {
       case 'nav-link active':
-        return successed(`${received} is NavItem disabled`);
-      case 'nav-link disabled':
+        return succeed(`${received} is NavItem disabled`);
+      case 'nav-link':
         return failed(`${received} is NavItem activated`);
       default:
         return failed(`${received} is not NavItem`);
@@ -67,8 +73,8 @@ expect.extend({
   },
   toBeDisabledNavItem(received: 'Your Feed' | 'Global Feed') {
     switch (screen.getByText(received).className) {
-      case 'nav-link disabled':
-        return successed(`${received} is NavItem disabled`);
+      case 'nav-link':
+        return succeed(`${received} is NavItem disabled`);
       case 'nav-link active':
         return failed(`${received} is NavItem activated`);
       default:
@@ -78,10 +84,17 @@ expect.extend({
 });
 
 const failed = (message: string) => jestMatchedResult(message, false);
-
-const successed = (message: string) => jestMatchedResult(message, true);
+const succeed = (message: string) => jestMatchedResult(message, true);
 
 const jestMatchedResult = (message: string, isPassed: boolean) => ({
   message: () => message,
   pass: isPassed,
 });
+
+const userMocked: User = {
+  email: '',
+  username: '',
+  bio: '',
+  token: '',
+  image: null,
+};

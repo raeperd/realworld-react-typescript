@@ -47,7 +47,8 @@ const userMock: User = {
   email: 'user@gmail.com',
   username: 'name',
   token: 'token',
-  bio: 'bio',
+  bio: null,
+  image: null,
 };
 
 const axiosResponse: AxiosResponse = {

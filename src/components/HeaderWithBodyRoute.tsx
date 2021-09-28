@@ -1,5 +1,5 @@
 import {
-  Link, NavLink, Route, Switch,
+  Link, Route, Switch, useHistory,
 } from 'react-router-dom';
 import React, { useState } from 'react';
 import NewPostPage, { EDITOR_PAGE_PATH } from '../pages/NewPostPage';
@@ -9,19 +9,22 @@ import Home, { HOME_PAGE_PATH } from '../pages/HomePage';
 import LoginPage, { LOGIN_PAGE_PATH } from '../pages/LogInPage';
 import SignUpPage, { SIGNUP_PAGE_PATH } from '../pages/SignUpPage';
 import { getCurrentUserOrNull, saveUser, User } from '../api/authentication';
+import { NavLinkListItem } from './NavListItem';
 
 export default () => {
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(() => getCurrentUserOrNull() !== null);
+  const [userLoggedIn, setUserLoggedIn] = useState(() => getCurrentUserOrNull());
+  const history = useHistory();
 
   const handleLoginSuccess = (user: User) => {
-    setIsUserLoggedIn(true);
+    setUserLoggedIn(user);
     saveUser(user);
+    history.push(HOME_PAGE_PATH);
   };
 
   return (
     <>
-      <Header isUserLoggedIn={isUserLoggedIn} />
-      <Body isUserLoggedIn={isUserLoggedIn} onLoginSuccess={handleLoginSuccess} />
+      <Header isUserLoggedIn={userLoggedIn !== null} />
+      <Body userLoggedIn={userLoggedIn} onLoginSuccess={handleLoginSuccess} />
     </>
   );
 };
@@ -40,13 +43,13 @@ const Header = ({ isUserLoggedIn }: { isUserLoggedIn: boolean }) => (
   </nav>
 );
 
-const Body = ({ isUserLoggedIn, onLoginSuccess }:
-  {isUserLoggedIn: boolean, onLoginSuccess: (user: User) => void}) => (
+const Body = ({ userLoggedIn, onLoginSuccess }:
+  {userLoggedIn: User | null, onLoginSuccess: (user: User) => void}) => (
     <Switch>
       <Route exact path={HOME_PAGE_PATH}>
-        <Home />
+        <Home userLoggedIn={userLoggedIn} />
       </Route>
-      {isUserLoggedIn
+      {userLoggedIn !== null
         ? <AuthorizedBodies />
         : <UnAuthorizedBodies onLoginSuccess={onLoginSuccess} />}
     </Switch>
@@ -88,12 +91,4 @@ const UnAuthorizedNavLinkList = () => (
     <NavLinkListItem to={LOGIN_PAGE_PATH}>Sign in</NavLinkListItem>
     <NavLinkListItem to={SIGNUP_PAGE_PATH}>Sign up</NavLinkListItem>
   </>
-);
-
-const NavLinkListItem = ({ to, children }: { to: string, children: string }) => (
-  <li className="nav-item">
-    <NavLink className="nav-link" activeClassName="nav-link active" exact to={to}>
-      {children}
-    </NavLink>
-  </li>
 );

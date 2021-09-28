@@ -78,4 +78,5 @@ const userMocked: User = {
   username: '',
   token: '',
   bio: '',
+  image: null,
 };

@@ -75,8 +75,9 @@ const expectNotToBeActive = (navItem: NavItem) => (
 const ACTIVE_CLASS_NAME = 'nav-link active';
 
 const USER_MOCKED: User = {
-  bio: '',
+  username: '',
   email: '',
   token: '',
-  username: '',
+  bio: null,
+  image: null,
 };

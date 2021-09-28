@@ -26,7 +26,8 @@ export interface User {
     email: string,
     username: string,
     token: string,
-    bio: string
+    bio: string | null,
+    image: string | null
 }
 
 export interface SignUpParam {

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
+import { User } from '../api/authentication';
+import { NavButtonListItem } from '../components/NavListItem';
 
-export default () => (
+export default ({ userLoggedIn }: {userLoggedIn: User | null}) => (
   <div className="home-page">
     <HomePageBanner />
     <div className="container page">
       <div className="row">
         <div className="col-md-9">
-          <HomeFeedToggle />
+          <HomeFeedToggle userLoggedIn={userLoggedIn} />
           <HomeArticlePreview />
           <HomeArticlePreview />
         </div>
@@ -29,37 +31,45 @@ const HomePageBanner = () => (
   </div>
 );
 
-const HomeFeedToggle = () => {
-  const [toogleActivated, setToggleActivated] = useState<HomeFeedToggleItem>('Global Feed');
-
-  const NavigationItem = ({ toggle }: {toggle: HomeFeedToggleItem}) => {
-    const navLinkItemName = (activated: boolean) => (
-      activated ? 'nav-link active' : 'nav-link disabled'
-    );
-
-    return (
-      <li className="nav-item">
-        <button
-          type="button"
-          className={navLinkItemName(toggle === toogleActivated)}
-          onClick={() => setToggleActivated(toggle)}
-        >
-          {toggle}
-        </button>
-      </li>
-    );
-  };
-
-  type HomeFeedToggleItem = 'Your Feed' | 'Global Feed';
+const HomeFeedToggle = ({ userLoggedIn }: {userLoggedIn: User | null }) => {
+  const { toggleState, toggleGlobalFeedState, toggleUserFeedState } = useToggleState(
+    { toggleActive: 'global' },
+  );
 
   return (
     <div className="feed-toggle">
       <ul className="nav nav-pills outline-active">
-        <NavigationItem toggle="Your Feed" />
-        <NavigationItem toggle="Global Feed" />
+        <NavButtonListItem activated={toggleState.toggleActive === 'global'} onClick={toggleGlobalFeedState}>
+          Global Feed
+        </NavButtonListItem>
+        {userLoggedIn !== null && (
+        <NavButtonListItem activated={toggleState.toggleActive === 'user'} onClick={toggleUserFeedState}>
+          Your Feed
+        </NavButtonListItem>
+        )}
       </ul>
     </div>
   );
+};
+
+type FeedToggleActiveState = {
+  readonly toggleActive: FeedToggle,
+}
+
+type FeedToggle = 'global' | 'user'
+
+const useToggleState = (initialState: FeedToggleActiveState) => {
+  const [toggleState, setActiveState] = useState(initialState);
+
+  const toggleGlobalFeedState = () => setActiveState({
+    toggleActive: 'global',
+  });
+
+  const toggleUserFeedState = () => setActiveState({
+    toggleActive: 'user',
+  });
+
+  return { toggleState, toggleGlobalFeedState, toggleUserFeedState };
 };
 
 const HomeArticlePreview = () => (
