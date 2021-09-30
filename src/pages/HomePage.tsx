@@ -61,13 +61,9 @@ type FeedToggle = 'global' | 'user'
 const useToggleState = (initialState: FeedToggleActiveState) => {
   const [toggleState, setActiveState] = useState(initialState);
 
-  const toggleGlobalFeedState = () => setActiveState({
-    toggleActive: 'global',
-  });
+  const toggleGlobalFeedState = () => setActiveState({ toggleActive: 'global' });
 
-  const toggleUserFeedState = () => setActiveState({
-    toggleActive: 'user',
-  });
+  const toggleUserFeedState = () => setActiveState({ toggleActive: 'user' });
 
   return { toggleState, toggleGlobalFeedState, toggleUserFeedState };
 };

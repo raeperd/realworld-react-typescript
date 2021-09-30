@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { login, User } from '../api/authentication';
 import useForm from '../components/hooks/useForm';
-import { FormContainer, FormErrorMessage, FormInput } from '../components/FormContainer';
+import Form from '../components/Form';
+import AuthPageContainer from '../components/AuthPageContainer';
 
 export default ({ onLoginSuccess }: {onLoginSuccess: (user: User) => void}) => (
-  <FormContainer title="Sign in">
+  <AuthPageContainer title="Sign in">
     <LoginForm onLoginSuccess={onLoginSuccess} />
-  </FormContainer>
+  </AuthPageContainer>
 );
 
 export const LOGIN_PAGE_PATH = '/login';
@@ -17,20 +18,27 @@ const LoginForm = ({ onLoginSuccess }: {onLoginSuccess: (user: User) => void}) =
     password: '',
   }, onSubmitCallBack);
 
-  const [isError, setIsError] = useState(false);
+  const [error, setError] = useState<Error | undefined>(undefined);
 
   async function onSubmitCallBack() {
     await login(values.email, values.password)
       .then((user) => onLoginSuccess(user))
-      .catch(() => setIsError(true));
+      .catch(() => setError(Error('Login Failed')));
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      {isError && (<FormErrorMessage message="Login Failed" />)}
-      <FormInput type="text" name="email" placeHolder="Email" onChange={handleChange} />
-      <FormInput type="password" name="password" placeHolder="Password" onChange={handleChange} />
-      <FormInput type="submit" name="submit-button" placeHolder="Sign in" />
-    </form>
+    <Form
+      onSubmit={handleSubmit}
+      error={error}
+      fields={[
+        {
+          type: 'text', name: 'email', placeholder: 'Email', onChange: handleChange,
+        },
+        {
+          type: 'password', name: 'password', placeholder: 'Password', onChange: handleChange,
+        },
+        { type: 'button', name: 'submit-button', placeholder: 'Sign in' },
+      ]}
+    />
   );
 };
