@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { User } from '../api/authentication';
-import { NavButtonListItem } from '../components/NavListItem';
+import { NavButtonListItem } from './components/NavListItem';
 
 export default ({ userLoggedIn }: {userLoggedIn: User | null}) => (
   <div className="home-page">

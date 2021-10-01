@@ -2,12 +2,12 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { HashRouter } from 'react-router-dom';
 import React from 'react';
 import HeaderWithBodyRoute from './HeaderWithBodyRoute';
-import { getCurrentUserOrNull, User } from '../api/authentication';
-import { EDITOR_PAGE_PATH } from '../pages/NewPostPage';
-import { HOME_PAGE_PATH } from '../pages/HomePage';
-import { SETTINGS_PAGE_PATH } from '../pages/SettingsPage';
-import { LOGIN_PAGE_PATH } from '../pages/LogInPage';
-import { SIGNUP_PAGE_PATH } from '../pages/SignUpPage';
+import { getCurrentUserOrNull, User } from '../../api/authentication';
+import { EDITOR_PAGE_PATH } from '../NewPostPage';
+import { HOME_PAGE_PATH } from '../HomePage';
+import { SETTINGS_PAGE_PATH } from '../SettingsPage';
+import { LOGIN_PAGE_PATH } from '../LogInPage';
+import { SIGNUP_PAGE_PATH } from '../SignUpPage';
 
 describe('Header', () => {
   test('when render expect guest nav items with href', () => {
