@@ -2,13 +2,13 @@ import {
   Link, Route, Switch, useHistory,
 } from 'react-router-dom';
 import React, { useState } from 'react';
-import NewPostPage, { EDITOR_PAGE_PATH } from '../pages/NewPostPage';
-import ProfilePage, { PROFILE_PAGE_PATH } from '../pages/ProfilePage';
-import SettingsPage, { SETTINGS_PAGE_PATH } from '../pages/SettingsPage';
-import Home, { HOME_PAGE_PATH } from '../pages/HomePage';
-import LoginPage, { LOGIN_PAGE_PATH } from '../pages/LogInPage';
-import SignUpPage, { SIGNUP_PAGE_PATH } from '../pages/SignUpPage';
-import { getCurrentUserOrNull, saveUser, User } from '../api/authentication';
+import NewPostPage, { EDITOR_PAGE_PATH } from '../NewPostPage';
+import ProfilePage, { PROFILE_PAGE_PATH } from '../ProfilePage';
+import SettingsPage, { SETTINGS_PAGE_PATH } from '../SettingsPage';
+import Home, { HOME_PAGE_PATH } from '../HomePage';
+import LoginPage, { LOGIN_PAGE_PATH } from '../LogInPage';
+import SignUpPage, { SIGNUP_PAGE_PATH } from '../SignUpPage';
+import { getCurrentUserOrNull, saveUser, User } from '../../api/authentication';
 import { NavLinkListItem } from './NavListItem';
 
 export default () => {

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import useForm from '../components/hooks/useForm';
+import useForm from './components/hooks/useForm';
 import { signUp, User } from '../api/authentication';
-import Form from '../components/Form';
-import AuthPageContainer from '../components/AuthPageContainer';
+import Form from './components/Form';
+import AuthPageContainer from './components/AuthPageContainer';
 
 export default ({ onSignUpSuccess }: {onSignUpSuccess: (user: User) => void }) => (
   <AuthPageContainer title="Sign Up">
