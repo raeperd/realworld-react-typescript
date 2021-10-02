@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { login, User } from '../api/authentication';
 import useForm from './components/hooks/useForm';
 import Form from './components/Form';
@@ -13,15 +13,15 @@ export default ({ onLoginSuccess }: {onLoginSuccess: (user: User) => void}) => (
 export const LOGIN_PAGE_PATH = '/login';
 
 const LoginForm = ({ onLoginSuccess }: {onLoginSuccess: (user: User) => void}) => {
-  const { handleSubmit, handleChange, values } = useForm({
+  const {
+    handleSubmit, handleChange, values, error, setError,
+  } = useForm({
     email: '',
     password: '',
-  }, onSubmitCallBack);
+  }, onSubmit, undefined);
 
-  const [error, setError] = useState<Error | undefined>(undefined);
-
-  async function onSubmitCallBack() {
-    await login(values.email, values.password)
+  function onSubmit() {
+    login(values.email, values.password)
       .then((user) => onLoginSuccess(user))
       .catch(() => setError(Error('Login Failed')));
   }

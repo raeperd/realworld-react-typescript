@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import useForm from './components/hooks/useForm';
 import { signUp, User } from '../api/authentication';
 import Form from './components/Form';
@@ -13,15 +13,15 @@ export default ({ onSignUpSuccess }: {onSignUpSuccess: (user: User) => void }) =
 export const SIGNUP_PAGE_PATH = '/register';
 
 const SignUpForm = ({ onSignUpSuccess }: {onSignUpSuccess: (user: User) => void }) => {
-  const { handleSubmit, handleChange, values } = useForm({
+  const {
+    handleSubmit, handleChange, values, error, setError,
+  } = useForm({
     email: '',
     username: '',
     password: '',
-  }, onSubmitCallBack);
+  }, onSubmit, undefined);
 
-  const [error, setError] = useState<Error | undefined>(undefined);
-
-  async function onSubmitCallBack() {
+  async function onSubmit() {
     await signUp(values)
       .then(onSignUpSuccess)
       .catch(() => setError(Error('Register Failed')));
