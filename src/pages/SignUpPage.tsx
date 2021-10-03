@@ -13,9 +13,7 @@ export default ({ onSignUpSuccess }: {onSignUpSuccess: (user: User) => void }) =
 export const SIGNUP_PAGE_PATH = '/register';
 
 const SignUpForm = ({ onSignUpSuccess }: {onSignUpSuccess: (user: User) => void }) => {
-  const {
-    handleSubmit, handleChange, values, error, setError,
-  } = useForm({
+  const { handleSubmit, handleChange, values, error, setError } = useForm({
     email: '',
     username: '',
     password: '',
@@ -32,15 +30,9 @@ const SignUpForm = ({ onSignUpSuccess }: {onSignUpSuccess: (user: User) => void 
       onSubmit={handleSubmit}
       error={error}
       fields={[
-        {
-          type: 'text', name: 'email', placeholder: 'Email', onChange: handleChange,
-        },
-        {
-          type: 'text', name: 'username', placeholder: 'Your Name', onChange: handleChange,
-        },
-        {
-          type: 'password', name: 'password', placeholder: 'Password', onChange: handleChange,
-        },
+        { type: 'text', name: 'email', placeholder: 'Email', onChange: handleChange },
+        { type: 'text', name: 'username', placeholder: 'Your Name', onChange: handleChange },
+        { type: 'password', name: 'password', placeholder: 'Password', onChange: handleChange },
         { type: 'button', name: 'submit-button', placeholder: 'Register' }]}
     />
   );

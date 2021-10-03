@@ -18,9 +18,7 @@ const FormErrorMessage = ({ message }: { message: string }) => (
   </ul>
 );
 
-function buildFormField({
-  type, name, placeholder, onChange,
-}: FormFieldProps): React.ReactElement {
+function buildFormField({ type, name, placeholder, onChange }: FormFieldProps): React.ReactElement {
   if (type === 'button') {
     return <FormButton key={name} name={name} placeholder={placeholder} />;
   }

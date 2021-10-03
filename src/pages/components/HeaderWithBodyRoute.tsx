@@ -1,6 +1,4 @@
-import {
-  Link, Route, Switch, useHistory,
-} from 'react-router-dom';
+import { Link, Route, Switch, useHistory } from 'react-router-dom';
 import React, { useState } from 'react';
 import NewPostPage, { EDITOR_PAGE_PATH } from '../NewPostPage';
 import ProfilePage, { PROFILE_PAGE_PATH } from '../ProfilePage';

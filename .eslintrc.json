@@ -28,6 +28,7 @@
       }
     ],
     "no-use-before-define": "off",
+    "object-curly-newline": ["error", { "multiline": true }],
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "import/extensions": [
       "error",

@@ -13,9 +13,7 @@ export default ({ onLoginSuccess }: {onLoginSuccess: (user: User) => void}) => (
 export const LOGIN_PAGE_PATH = '/login';
 
 const LoginForm = ({ onLoginSuccess }: {onLoginSuccess: (user: User) => void}) => {
-  const {
-    handleSubmit, handleChange, values, error, setError,
-  } = useForm({
+  const { handleSubmit, handleChange, values, error, setError } = useForm({
     email: '',
     password: '',
   }, onSubmit, undefined);
@@ -31,12 +29,8 @@ const LoginForm = ({ onLoginSuccess }: {onLoginSuccess: (user: User) => void}) =
       onSubmit={handleSubmit}
       error={error}
       fields={[
-        {
-          type: 'text', name: 'email', placeholder: 'Email', onChange: handleChange,
-        },
-        {
-          type: 'password', name: 'password', placeholder: 'Password', onChange: handleChange,
-        },
+        { type: 'text', name: 'email', placeholder: 'Email', onChange: handleChange },
+        { type: 'password', name: 'password', placeholder: 'Password', onChange: handleChange },
         { type: 'button', name: 'submit-button', placeholder: 'Sign in' },
       ]}
     />
