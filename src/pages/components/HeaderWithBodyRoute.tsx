@@ -1,6 +1,6 @@
 import { Link, Route, Switch, useHistory } from 'react-router-dom';
 import React, { useState } from 'react';
-import NewPostPage, { EDITOR_PAGE_PATH } from '../NewPostPage';
+import NewPostPage, { EDITOR_PAGE_PATH } from '../EditorPage';
 import ProfilePage, { PROFILE_PAGE_PATH } from '../ProfilePage';
 import SettingsPage, { SETTINGS_PAGE_PATH } from '../SettingsPage';
 import Home, { HOME_PAGE_PATH } from '../HomePage';

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default <Type extends { [key: string]: string | undefined }>
+export default <Type extends { [key: string]: string | string[] }>
 (initialState: Type, onSubmit: () => void, errorDefault: undefined | Error) => {
   const [values, setValues] = useState(initialState);
   const [error, setError] = useState(errorDefault);

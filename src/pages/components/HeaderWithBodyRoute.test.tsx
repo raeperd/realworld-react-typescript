@@ -3,7 +3,7 @@ import { HashRouter } from 'react-router-dom';
 import React from 'react';
 import HeaderWithBodyRoute from './HeaderWithBodyRoute';
 import { getCurrentUserOrNull, User } from '../../api/authentication';
-import { EDITOR_PAGE_PATH } from '../NewPostPage';
+import { EDITOR_PAGE_PATH } from '../EditorPage';
 import { HOME_PAGE_PATH } from '../HomePage';
 import { SETTINGS_PAGE_PATH } from '../SettingsPage';
 import { LOGIN_PAGE_PATH } from '../LogInPage';
