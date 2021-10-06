@@ -48,19 +48,19 @@ const Body = ({ userLoggedIn, onLoginSuccess }:
         <Home userLoggedIn={userLoggedIn} />
       </Route>
       {userLoggedIn !== null
-        ? <AuthorizedBodies />
+        ? <AuthorizedBodies user={userLoggedIn} />
         : <UnAuthorizedBodies onLoginSuccess={onLoginSuccess} />}
     </Switch>
 );
 
-const AuthorizedBodies = () => (
+const AuthorizedBodies = ({ user }: {user: User}) => (
   <Switch>
     <Route path={EDITOR_PAGE_PATH}><NewPostPage /></Route>
     <Route path={PROFILE_PAGE_PATH}>
       <ProfilePage />
     </Route>
     <Route path={SETTINGS_PAGE_PATH}>
-      <SettingsPage />
+      <SettingsPage user={user} />
     </Route>
   </Switch>
 );
