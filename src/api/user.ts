@@ -1,8 +1,8 @@
-import axios from './axiosClient';
+import axiosClient from './axiosClient';
 import { User } from './authentication';
 
 export const updateUser = (userUpdateParam: UserUpdateParam) => (
-  axios.put<User>('/users', { user: { ...userUpdateParam } })
+  axiosClient.put<User>('/users', { user: { ...userUpdateParam } })
     .then((response) => response.data)
 );
 
