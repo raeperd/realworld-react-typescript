@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getCurrentUserOrNull } from './authentication';
 
-const BASE_URL = 'https://conduit.productionready.io/api';
+const BASE_URL = 'https://api.realworld.io/api';
 
 axios.interceptors.request.use((config) => {
   const user = getCurrentUserOrNull();
