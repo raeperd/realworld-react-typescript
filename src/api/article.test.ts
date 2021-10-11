@@ -19,7 +19,7 @@ describe('createArticle', () => {
     axiosMocked.post.mockResolvedValue(axiosResponse);
 
     return createArticle(articleContentsMock)
-      .then((response) => { expect(response).toBe(axiosResponse.data); });
+      .then((response) => { expect(response).toStrictEqual(axiosResponse.data.article); });
   });
 });
 
@@ -50,7 +50,7 @@ const articleMocked: Article = {
 };
 
 const axiosResponse: AxiosResponse = {
-  data: articleMocked,
+  data: { article: articleMocked },
   status: 201,
   statusText: '',
   headers: undefined,

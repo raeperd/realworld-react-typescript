@@ -1,12 +1,12 @@
 import axios from './axiosClient';
 
 export const login = (email: string, password: string) => (
-  axios.post<User>('/users/login', { user: { email, password } }))
-  .then((response) => response.data);
+  axios.post<UserResponseDTO>('/users/login', { user: { email, password } }))
+  .then((response) => response.data.user);
 
 export const signUp = ({ email, username, password }: SignUpParam) => (
-  axios.post<User>('/users', { user: { email, username, password } })
-    .then((response) => response.data)
+  axios.post<UserResponseDTO>('/users', { user: { email, username, password } })
+    .then((response) => response.data.user)
 );
 
 export const saveUser = (user: User) => {
@@ -21,6 +21,10 @@ export const getCurrentUserOrNull = () => {
   }
   return JSON.parse(userOrNull) as User;
 };
+
+interface UserResponseDTO {
+  user: User
+}
 
 export interface User {
     email: string,

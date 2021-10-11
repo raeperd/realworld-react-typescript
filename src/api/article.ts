@@ -2,14 +2,11 @@ import axios from './axiosClient';
 import { User } from './authentication';
 
 export const createArticle = (articleContents: ArticleContents) => (
-  axios.post<Article>('/articles', { article: articleContents })
-    .then((response) => response.data));
+  axios.post<ArticleResponseDTO>('/articles', { article: articleContents }))
+  .then((response) => response.data.article);
 
-export interface ArticleContents {
-  title: string,
-  description: string,
-  body: string,
-  tagList: string[],
+interface ArticleResponseDTO {
+  article: Article
 }
 
 export interface Article extends ArticleContents{
@@ -19,4 +16,11 @@ export interface Article extends ArticleContents{
   favorited: boolean,
   favoritesCount: number,
   author: User
+}
+
+export interface ArticleContents {
+  title: string,
+  description: string,
+  body: string,
+  tagList: string[],
 }

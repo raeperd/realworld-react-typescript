@@ -37,7 +37,7 @@ describe('saveUser', () => {
 
     saveUser(userMock);
 
-    expect(getCurrentUserOrNull()).not.toBeNull();
+    expect(getCurrentUserOrNull()).toStrictEqual(userMock);
   });
 });
 
