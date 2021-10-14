@@ -1,94 +1,61 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 import HomePage from './HomePage';
+import { Article, feedArticles, getArticles } from '../api/article';
 import { User } from '../api/authentication';
 
-test('when render expect Banner to be in the document', () => {
-  const { getByText } = render(<HomePage userLoggedIn={null} />);
+jest.mock('../api/article');
+const getArticlesMock = getArticles as jest.MockedFunction<typeof getArticles>;
+const feedArticlesMock = feedArticles as jest.MockedFunction<typeof feedArticles>;
 
-  expect(getByText('A place to share your knowledge.')).toBeInTheDocument();
+describe('Banner', () => {
+  test('when render expect Banner to be in the document', async () => {
+    getArticlesMock.mockResolvedValue([]);
+    const { getByText } = render(<HomePage userLoggedIn={null} />);
+
+    await waitFor(
+      () => expect(getByText('A place to share your knowledge.')).toBeInTheDocument(),
+    );
+  });
 });
 
-test('when render expect SideBar to be in the document', () => {
-  const { getByText } = render(<HomePage userLoggedIn={null} />);
+describe('ArticleFeed', () => {
+  const FEED_TEXT = 'Your Feed';
 
-  expect(getByText('Popular Tags')).toBeInTheDocument();
-});
+  test('when render before login expect feed to  not visible', async () => {
+    getArticlesMock.mockResolvedValueOnce([articleMocked]);
+    const { queryByText, getByText } = render(<HomePage userLoggedIn={null} />);
 
-describe('HomeFeedToggle', () => {
-  test('when render without logged in expect no Your Feed', () => {
-    const { queryByText } = render(<HomePage userLoggedIn={null} />);
+    await waitFor(() => {
+      expect(getArticlesMock).toBeCalledTimes(1);
+      expect(getByText(articleMocked.title)).toBeInTheDocument();
+    });
 
-    expect(queryByText('Your Feed')).not.toBeInTheDocument();
+    expect(queryByText(FEED_TEXT)).not.toBeInTheDocument();
   });
 
-  test('when render expect Global Feed is focused', () => {
-    render(<HomePage userLoggedIn={null} />);
-
-    expect('Global Feed').toBeActivatedNavItem();
-  });
-
-  test('when render with user expect Your Feed to be in the document', () => {
-    render(<HomePage userLoggedIn={userMocked} />);
-
-    expect('Your Feed').toBeDisabledNavItem();
-    expect('Global Feed').toBeActivatedNavItem();
-  });
-
-  test('when click button expect activated feed changed', () => {
+  test('when render after login expect feed to visible', async () => {
+    getArticlesMock.mockResolvedValueOnce([]);
+    feedArticlesMock.mockResolvedValueOnce([articleMocked]);
     const { getByText } = render(<HomePage userLoggedIn={userMocked} />);
-    fireEvent.click(getByText('Your Feed'));
 
-    expect('Global Feed').toBeDisabledNavItem();
-    expect('Your Feed').toBeActivatedNavItem();
+    expect(getByText(FEED_TEXT)).toBeInTheDocument();
+
+    fireEvent.click(getByText(FEED_TEXT));
+    await waitFor(() => expect(feedArticlesMock).toBeCalledTimes(1))
+      .then(() => expect(getByText(articleMocked.title)).toBeInTheDocument());
   });
 });
 
-test('when render expect HomeArticlePreview to be in the document', () => {
-  render(<HomePage userLoggedIn={null} />);
+describe('SideBar', () => {
+  test('when render expect SideBar to be in the document', () => {
+    getArticlesMock.mockResolvedValueOnce([]);
+    const { getByText } = render(<HomePage userLoggedIn={null} />);
 
-  expect(screen.getAllByText('Read more...')[0]).toBeInTheDocument();
-});
-
-/* eslint-disable @typescript-eslint/no-namespace */
-declare global {
-    namespace jest {
-        interface Matchers<R> {
-            toBeActivatedNavItem(): R;
-            toBeDisabledNavItem(): R;
-        }
-    }
-}
-
-expect.extend({
-  toBeActivatedNavItem(received: 'Your Feed' | 'Global Feed') {
-    switch (screen.getByText(received).className) {
-      case 'nav-link active':
-        return succeed(`${received} is NavItem disabled`);
-      case 'nav-link':
-        return failed(`${received} is NavItem activated`);
-      default:
-        return failed(`${received} is not NavItem`);
-    }
-  },
-  toBeDisabledNavItem(received: 'Your Feed' | 'Global Feed') {
-    switch (screen.getByText(received).className) {
-      case 'nav-link':
-        return succeed(`${received} is NavItem disabled`);
-      case 'nav-link active':
-        return failed(`${received} is NavItem activated`);
-      default:
-        return failed(`${received} is not NavItem`);
-    }
-  },
-});
-
-const failed = (message: string) => jestMatchedResult(message, false);
-const succeed = (message: string) => jestMatchedResult(message, true);
-
-const jestMatchedResult = (message: string, isPassed: boolean) => ({
-  message: () => message,
-  pass: isPassed,
+    return waitFor(
+      () => expect(getByText('Popular Tags')).toBeInTheDocument(),
+    );
+  });
 });
 
 const userMocked: User = {
@@ -97,4 +64,23 @@ const userMocked: User = {
   bio: '',
   token: '',
   image: null,
+};
+
+const articleMocked: Article = {
+  title: 'title mocked',
+  slug: 'slug',
+  description: 'description',
+  body: 'body',
+  tagList: [],
+  createdAt: '2016-02-18T03:22:56.637Z',
+  updatedAt: '2016-02-18T03:22:56.637Z',
+  favorited: false,
+  favoritesCount: 0,
+  author: {
+    email: 'user@gmail.com',
+    username: 'user',
+    token: 'token',
+    bio: null,
+    image: null,
+  },
 };

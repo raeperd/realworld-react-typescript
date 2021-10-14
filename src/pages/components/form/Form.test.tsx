@@ -23,7 +23,7 @@ test('when render form with button field expect type submit', () => {
 });
 
 test('when click button expect onSubmit called', () => {
-  const handleSubmit = jest.fn();
+  const handleSubmit = jest.fn((e) => e.preventDefault());
   const { getByRole } = render(<Form onSubmit={handleSubmit}><FormButton /></Form>);
 
   getByRole('button').click();

@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { User } from '../api/authentication';
 import { NavButtonListItem } from './components/NavListItem';
+import { Article, feedArticles, getArticles } from '../api/article';
 
 export default ({ userLoggedIn }: {userLoggedIn: User | null}) => (
   <div className="home-page">
-    <HomePageBanner />
+    <Banner />
     <div className="container page">
       <div className="row">
         <div className="col-md-9">
-          <HomeFeedToggle userLoggedIn={userLoggedIn} />
-          <HomeArticlePreview />
-          <HomeArticlePreview />
+          <ArticleFeed userLoggedIn={userLoggedIn} />
         </div>
         <div className="col-md-3">
-          <HomeSideBar />
+          <TagSideBar />
         </div>
       </div>
     </div>
@@ -22,7 +21,7 @@ export default ({ userLoggedIn }: {userLoggedIn: User | null}) => (
 
 export const HOME_PAGE_PATH = '/';
 
-const HomePageBanner = () => (
+const Banner = () => (
   <div className="banner">
     <div className="container">
       <h1 className="logo-font">conduit</h1>
@@ -31,66 +30,95 @@ const HomePageBanner = () => (
   </div>
 );
 
-const HomeFeedToggle = ({ userLoggedIn }: {userLoggedIn: User | null }) => {
-  const { toggleState, toggleGlobalFeedState, toggleUserFeedState } = useToggleState(
-    { toggleActive: 'global' },
-  );
+const ArticleFeed = ({ userLoggedIn }: {userLoggedIn: User | null }) => {
+  const [feedActive, setFeedActive] = useState<'global' | 'user'>('global');
+  const [articlesGlobal, setArticlesGlobal] = useState<Article[]>([]);
+  const [articlesUserFeed, setArticlesUserFeed] = useState<Article[] | undefined>(undefined);
+
+  useEffect(() => {
+    getArticles()
+      .then((articles) => setArticlesGlobal(articles));
+    return () => setArticlesGlobal([]);
+  }, []);
+
+  function handleClickUserFeed() {
+    setFeedActive('user');
+    if (!articlesUserFeed) {
+      feedArticles()
+        .then((articles) => setArticlesUserFeed(articles));
+    }
+  }
 
   return (
+    <>
+      <ArticleFeedNavBar
+        isUserLoggedIn={userLoggedIn !== null}
+        feedActive={feedActive}
+        onClickGlobalFeed={() => setFeedActive('global')}
+        onClickUserFeed={() => handleClickUserFeed()}
+      />
+      {feedActive === 'global'
+        ? articlesGlobal.map((article) => (
+          <ArticlePreview
+            key={article.title + article.author.username}
+            article={article}
+          />
+        ))
+        : articlesUserFeed?.map((article) => (
+          <ArticlePreview
+            key={article.title + article.author.username}
+            article={article}
+          />
+        ))}
+    </>
+  );
+};
+
+const ArticleFeedNavBar = ({ isUserLoggedIn, feedActive, onClickGlobalFeed, onClickUserFeed }:
+  FeedNavBarProps) => (
     <div className="feed-toggle">
       <ul className="nav nav-pills outline-active">
-        <NavButtonListItem activated={toggleState.toggleActive === 'global'} onClick={toggleGlobalFeedState}>
+        <NavButtonListItem activated={feedActive === 'global'} onClick={onClickGlobalFeed}>
           Global Feed
         </NavButtonListItem>
-        {userLoggedIn !== null && (
-        <NavButtonListItem activated={toggleState.toggleActive === 'user'} onClick={toggleUserFeedState}>
+        { isUserLoggedIn && (
+        <NavButtonListItem activated={feedActive === 'user'} onClick={onClickUserFeed}>
           Your Feed
         </NavButtonListItem>
         )}
       </ul>
     </div>
-  );
-};
+);
 
-type FeedToggleActiveState = {
-  readonly toggleActive: FeedToggle,
+type FeedNavBarProps = {
+  isUserLoggedIn: boolean,
+  feedActive: 'global' | 'user',
+  onClickGlobalFeed: () => void,
+  onClickUserFeed: () => void
 }
 
-type FeedToggle = 'global' | 'user'
-
-const useToggleState = (initialState: FeedToggleActiveState) => {
-  const [toggleState, setActiveState] = useState(initialState);
-
-  const toggleGlobalFeedState = () => setActiveState({ toggleActive: 'global' });
-
-  const toggleUserFeedState = () => setActiveState({ toggleActive: 'user' });
-
-  return { toggleState, toggleGlobalFeedState, toggleUserFeedState };
-};
-
-const HomeArticlePreview = () => (
+const ArticlePreview = ({ article }: {article: Article}) => (
   <div className="article-preview">
     <div className="article-meta">
-      <a href="profile.html"><img src="//i.imgur.com/Qr71crq.jpg" alt="profile" /></a>
+      <a href="profile.html"><img src={article.author.image ?? undefined} alt="profile" /></a>
       <div className="info">
-        <a href="/" className="author">Eric Simons</a>
-        <span className="date">January 20th</span>
+        <a href="/" className="author">{article.author.username}</a>
+        <span className="date">{article.createdAt}</span>
       </div>
       <button type="button" className="btn btn-outline-primary btn-sm pull-xs-right">
         <i className="ion-heart" />
-        {' '}
-        29
+        {` ${article.favoritesCount}`}
       </button>
     </div>
     <a href="/" className="preview-link">
-      <h1>How to build webapps that scale</h1>
-      <p>This is the description for the post.</p>
+      <h1>{article.title}</h1>
+      <p>{article.description}</p>
       <span>Read more...</span>
     </a>
   </div>
 );
 
-const HomeSideBar = () => (
+const TagSideBar = () => (
   <div className="sidebar">
     <p>Popular Tags</p>
 

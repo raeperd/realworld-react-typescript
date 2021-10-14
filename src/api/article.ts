@@ -1,12 +1,36 @@
 import axios from './axiosClient';
 import { User } from './authentication';
 
-export const createArticle = (articleContents: ArticleContents) => (
-  axios.post<ArticleResponseDTO>('/articles', { article: articleContents }))
-  .then((response) => response.data.article);
+export function createArticle(articleContents: ArticleContents): Promise<Article> {
+  return axios.post<ArticleResponseDTO>('/articles', { article: articleContents })
+    .then((response) => response.data.article);
+}
+
+export function getArticles(queryParameter?: ArticlesQueryParameter): Promise<Article[]> {
+  return axios.get<MultipleArticleResponseDTO>('/articles', { params: queryParameter })
+    .then((response) => response.data.articles);
+}
+
+export function feedArticles(queryParameter?: PaginationParameter): Promise<Article[]> {
+  return axios.get<MultipleArticleResponseDTO>('/articles/feed', { params: queryParameter })
+    .then((response) => response.data.articles);
+}
+
+interface ArticlesQueryParameter extends PaginationParameter{
+  tag? : string,
+  author?: string,
+  favorited?: string,
+}
+interface PaginationParameter {
+  limit?: number,
+  offset?: number
+}
 
 interface ArticleResponseDTO {
   article: Article
+}
+interface MultipleArticleResponseDTO {
+  articles: Article[]
 }
 
 export interface Article extends ArticleContents{
@@ -17,7 +41,6 @@ export interface Article extends ArticleContents{
   favoritesCount: number,
   author: User
 }
-
 export interface ArticleContents {
   title: string,
   description: string,
