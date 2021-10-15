@@ -9,11 +9,14 @@ import { SETTINGS_PAGE_PATH } from '../SettingsPage';
 import { LOGIN_PAGE_PATH } from '../LogInPage';
 import { SIGNUP_PAGE_PATH } from '../SignUpPage';
 import { getArticles } from '../../api/article';
+import { getTags } from '../../api/tag';
 
 jest.mock('../../api/article');
 const getArticlesMock = getArticles as jest.MockedFunction<typeof getArticles>;
 jest.mock('../../api/authentication');
 const getCurrentUserOrNullMocked = getCurrentUserOrNull as jest.MockedFunction<typeof getCurrentUserOrNull>;
+jest.mock('../../api/tag');
+const getTagsMock = getTags as jest.MockedFunction<typeof getTags>;
 
 afterEach(() => jest.resetAllMocks());
 
@@ -21,6 +24,7 @@ describe('Header', () => {
   test('when render expect guest nav items with href', async () => {
     getCurrentUserOrNullMocked.mockReturnValueOnce(null);
     getArticlesMock.mockResolvedValueOnce([]);
+    getTagsMock.mockResolvedValueOnce([]);
     const { getByText, queryByText } = render(<HashRouter><HeaderWithBodyRoute /></HashRouter>);
 
     expect(getByText('Home')).toHaveAttribute('href', `#${HOME_PAGE_PATH}`);
@@ -40,6 +44,7 @@ describe('Header', () => {
 test('when user loggedIn expect return user nav items with href', async () => {
   getCurrentUserOrNullMocked.mockReturnValueOnce(USER_MOCKED);
   getArticlesMock.mockResolvedValueOnce([]);
+  getTagsMock.mockResolvedValueOnce([]);
   const { getByText } = render(<HashRouter><HeaderWithBodyRoute /></HashRouter>);
 
   await waitFor(() => {

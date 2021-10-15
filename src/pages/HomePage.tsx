@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { User } from '../api/authentication';
 import { NavButtonListItem } from './components/NavListItem';
 import { Article, feedArticles, getArticles } from '../api/article';
+import { getTags } from '../api/tag';
 
 export default ({ userLoggedIn }: {userLoggedIn: User | null}) => (
   <div className="home-page">
@@ -118,19 +119,29 @@ const ArticlePreview = ({ article }: {article: Article}) => (
   </div>
 );
 
-const TagSideBar = () => (
-  <div className="sidebar">
-    <p>Popular Tags</p>
+const TagSideBar = () => {
+  const [tags, setTags] = useState<string[] | undefined>(undefined);
 
-    <div className="tag-list">
-      <a href="index.html" className="tag-pill tag-default">programming</a>
-      <a href="index.html" className="tag-pill tag-default">javascript</a>
-      <a href="index.html" className="tag-pill tag-default">emberjs</a>
-      <a href="index.html" className="tag-pill tag-default">angularjs</a>
-      <a href="index.html" className="tag-pill tag-default">react</a>
-      <a href="index.html" className="tag-pill tag-default">mean</a>
-      <a href="index.html" className="tag-pill tag-default">node</a>
-      <a href="index.html" className="tag-pill tag-default">rails</a>
+  useEffect(() => {
+    getTags()
+      .then((response) => setTags(response));
+    return () => setTags([]);
+  }, []);
+
+  return (
+    <div className="sidebar">
+      <p>Popular Tags</p>
+      <div className="tag-list">
+        {tags?.map((tag) => (
+          <a
+            key={tag}
+            href="index.html"
+            className="tag-pill tag-default"
+          >
+            {tag}
+          </a>
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};

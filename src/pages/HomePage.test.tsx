@@ -3,14 +3,18 @@ import React from 'react';
 import HomePage from './HomePage';
 import { Article, feedArticles, getArticles } from '../api/article';
 import { User } from '../api/authentication';
+import { getTags } from '../api/tag';
 
 jest.mock('../api/article');
 const getArticlesMock = getArticles as jest.MockedFunction<typeof getArticles>;
 const feedArticlesMock = feedArticles as jest.MockedFunction<typeof feedArticles>;
+jest.mock('../api/tag');
+const getTagsMock = getTags as jest.MockedFunction<typeof getTags>;
 
 describe('Banner', () => {
   test('when render expect Banner to be in the document', async () => {
-    getArticlesMock.mockResolvedValue([]);
+    getArticlesMock.mockResolvedValueOnce([]);
+    getTagsMock.mockResolvedValueOnce([]);
     const { getByText } = render(<HomePage userLoggedIn={null} />);
 
     await waitFor(
@@ -24,6 +28,7 @@ describe('ArticleFeed', () => {
 
   test('when render before login expect feed to  not visible', async () => {
     getArticlesMock.mockResolvedValueOnce([articleMocked]);
+    getTagsMock.mockResolvedValueOnce([]);
     const { queryByText, getByText } = render(<HomePage userLoggedIn={null} />);
 
     await waitFor(() => {
@@ -37,6 +42,7 @@ describe('ArticleFeed', () => {
   test('when render after login expect feed to visible', async () => {
     getArticlesMock.mockResolvedValueOnce([]);
     feedArticlesMock.mockResolvedValueOnce([articleMocked]);
+    getTagsMock.mockResolvedValueOnce([]);
     const { getByText } = render(<HomePage userLoggedIn={userMocked} />);
 
     expect(getByText(FEED_TEXT)).toBeInTheDocument();
@@ -48,13 +54,13 @@ describe('ArticleFeed', () => {
 });
 
 describe('SideBar', () => {
-  test('when render expect SideBar to be in the document', () => {
+  test('when render expect SideBar to be in the document', async () => {
     getArticlesMock.mockResolvedValueOnce([]);
+    getTagsMock.mockResolvedValueOnce(['some-tag']);
     const { getByText } = render(<HomePage userLoggedIn={null} />);
 
-    return waitFor(
-      () => expect(getByText('Popular Tags')).toBeInTheDocument(),
-    );
+    await waitFor(() => expect(getByText('Popular Tags')).toBeInTheDocument())
+      .then(() => expect(getByText('some-tag')).toBeInTheDocument());
   });
 });
 
