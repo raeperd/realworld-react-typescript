@@ -3,7 +3,11 @@ import React from 'react';
 
 export const NavLinkListItem = ({ to, children }: { to: string, children: string }) => (
   <NavListItem>
-    <NavLink className={CLASS_NAME_NAV_LINK} activeClassName={CLASS_NAME_ACTIVE_NAV_LINK} exact to={to}>
+    <NavLink
+      className={(isActive) => (isActive ? CLASS_NAME_NAV_LINK : `${CLASS_NAME_NAV_LINK} active`)}
+      exact
+      to={to}
+    >
       {children}
     </NavLink>
   </NavListItem>

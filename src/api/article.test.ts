@@ -8,17 +8,10 @@ describe('createArticle', () => {
   test('when createArticle expect post with url', () => {
     axiosMocked.post.mockResolvedValueOnce(axiosResponseWithData({ article: articleMocked }));
 
-    return createArticle(articleContentsMock)
-      .then(() => {
-        expect(axiosMocked.post).toBeCalledWith('/articles', { article: articleContentsMock });
-      });
-  });
-
-  test('when createArticle expect return article', () => {
-    axiosMocked.post.mockResolvedValueOnce(axiosResponseWithData({ article: articleMocked }));
-
-    return createArticle(articleContentsMock)
-      .then((response) => { expect(response).toStrictEqual(articleMocked); });
+    return createArticle(articleContentsMock).then((response) => {
+      expect(axiosMocked.post).toBeCalledWith('/articles', { article: articleContentsMock });
+      expect(response).toStrictEqual(articleMocked);
+    });
   });
 });
 
@@ -26,8 +19,10 @@ describe('getArticles', () => {
   test('when getArticles expect get with url', () => {
     axiosMocked.get.mockResolvedValueOnce(axiosResponseWithData({ articles: [articleMocked] }));
 
-    return getArticles()
-      .then(() => expect(axiosMocked.get).toBeCalledWith('/articles', { params: undefined }));
+    return getArticles().then((response) => {
+      expect(axiosMocked.get).toBeCalledWith('/articles', { params: undefined });
+      expect(response).toStrictEqual([articleMocked]);
+    });
   });
 
   test('when getArticles with params expect get with params', () => {
@@ -36,21 +31,16 @@ describe('getArticles', () => {
     return getArticles({ tag: 'react' })
       .then(() => expect(axiosMocked.get).toBeCalledWith('/articles', { params: { tag: 'react' } }));
   });
-
-  test('when getArticles expect return articles', () => {
-    axiosMocked.get.mockResolvedValueOnce(axiosResponseWithData({ articles: [articleMocked] }));
-
-    return getArticles()
-      .then((response) => expect(response).toStrictEqual([articleMocked]));
-  });
 });
 
 describe('feedArticles', () => {
   test('when feedArticles expect get with url', () => {
     axiosMocked.get.mockResolvedValueOnce(axiosResponseWithData({ articles: [articleMocked] }));
 
-    return feedArticles()
-      .then(() => expect(axiosMocked.get).toBeCalledWith('/articles/feed', { params: undefined }));
+    return feedArticles().then((response) => {
+      expect(axiosMocked.get).toBeCalledWith('/articles/feed', { params: undefined });
+      expect(response).toStrictEqual([articleMocked]);
+    });
   });
 
   test('when feedArticles with params expect get with params', () => {
@@ -58,13 +48,6 @@ describe('feedArticles', () => {
 
     return feedArticles({ limit: 20 })
       .then(() => expect(axiosMocked.get).toBeCalledWith('/articles/feed', { params: { limit: 20 } }));
-  });
-
-  test('when feedArticles expect return articles', () => {
-    axiosMocked.get.mockResolvedValueOnce(axiosResponseWithData({ articles: [articleMocked] }));
-
-    return feedArticles()
-      .then((response) => expect(response).toStrictEqual([articleMocked]));
   });
 });
 

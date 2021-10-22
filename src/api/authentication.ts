@@ -1,26 +1,27 @@
 import axios from './axiosClient';
 
-export const login = (email: string, password: string) => (
-  axios.post<UserResponseDTO>('/users/login', { user: { email, password } }))
-  .then((response) => response.data.user);
+export function login(email: string, password: string): Promise<User> {
+  return axios.post<UserResponseDTO>('/users/login', { user: { email, password } })
+    .then((response) => response.data.user);
+}
 
-export const signUp = ({ email, username, password }: SignUpParam) => (
-  axios.post<UserResponseDTO>('/users', { user: { email, username, password } })
-    .then((response) => response.data.user)
-);
+export function signUp({ email, username, password }: SignUpParam): Promise<User> {
+  return axios.post<UserResponseDTO>('/users', { user: { email, username, password } })
+    .then((response) => response.data.user);
+}
 
-export const saveUser = (user: User) => {
+export function saveUser(user: User): User {
   window.localStorage.setItem(USER_KEY, JSON.stringify(user));
   return user;
-};
+}
 
-export const getCurrentUserOrNull = () => {
+export function getCurrentUserOrNull(): User | null {
   const userOrNull = window.localStorage.getItem(USER_KEY);
   if (userOrNull === null) {
     return null;
   }
   return JSON.parse(userOrNull) as User;
-};
+}
 
 interface UserResponseDTO {
   user: User
