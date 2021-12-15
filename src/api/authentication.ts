@@ -23,7 +23,7 @@ export function getCurrentUserOrNull(): User | null {
   return JSON.parse(userOrNull) as User;
 }
 
-interface UserResponseDTO {
+export interface UserResponseDTO {
   user: User
 }
 

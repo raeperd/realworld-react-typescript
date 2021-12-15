@@ -57,7 +57,7 @@ const AuthorizedBodies = ({ user }: {user: User}) => (
   <Switch>
     <Route path={EDITOR_PAGE_PATH}><NewPostPage /></Route>
     <Route path={PROFILE_PAGE_PATH}>
-      <ProfilePage />
+      <ProfilePage user={user} />
     </Route>
     <Route path={SETTINGS_PAGE_PATH}>
       <SettingsPage user={user} />

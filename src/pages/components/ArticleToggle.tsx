@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavButtonListItem } from './NavListItem';
-import { Article } from '../../api/article';
+import { Article, favoriteArticle } from '../../api/article';
 
 export default <T extends string>({ feeds, onClickFeed }: ArticleToggleProps<T>) => {
   const [feedActive, setFeedActive] = useState(feeds[0]);
@@ -32,12 +32,6 @@ interface ArticleToggleProps<T extends string> {
   readonly onClickFeed: (feed: T) => Promise<Article[]>
 }
 
-interface ArticleToggleNavBarProps<T extends string> {
-  readonly feedActivated: T
-  readonly feeds: T[]
-  readonly onFeedClick: (feed: T) => void
-}
-
 const ArticleToggleNavBar = <T extends string>
   ({ feedActivated, feeds, onFeedClick } : ArticleToggleNavBarProps<T>) => (
     <div className="feed-toggle">
@@ -51,23 +45,42 @@ const ArticleToggleNavBar = <T extends string>
     </div>
   );
 
-const ArticlePreview = ({ article }: { article: Article }) => (
-  <div className="article-preview">
-    <div className="article-meta">
-      <a href="profile.html"><img src={article.author.image ?? undefined} alt="profile" /></a>
-      <div className="info">
-        <a href="/" className="author">{article.author.username}</a>
-        <span className="date">{article.createdAt}</span>
+interface ArticleToggleNavBarProps<T extends string> {
+  readonly feedActivated: T
+  readonly feeds: T[]
+  readonly onFeedClick: (feed: T) => void
+}
+
+const ArticlePreview = ({ article }: { article: Article }) => {
+  const [favoritesCount, setFavoritesCount] = useState(article.favoritesCount);
+
+  function handleClickFavorite() {
+    favoriteArticle(article)
+      .then((response) => setFavoritesCount(response.favoritesCount));
+  }
+
+  return (
+    <div className="article-preview">
+      <div className="article-meta">
+        <a href="profile.html"><img src={article.author.image ?? undefined} alt="profile" /></a>
+        <div className="info">
+          <a href="/" className="author">{article.author.username}</a>
+          <span className="date">{article.createdAt}</span>
+        </div>
+        <button
+          type="button"
+          className="btn btn-outline-primary btn-sm pull-xs-right"
+          onClick={handleClickFavorite}
+        >
+          <i className="ion-heart" />
+          {`${favoritesCount}`}
+        </button>
       </div>
-      <button type="button" className="btn btn-outline-primary btn-sm pull-xs-right">
-        <i className="ion-heart" />
-        {` ${article.favoritesCount}`}
-      </button>
+      <a href="/" className="preview-link">
+        <h1>{article.title}</h1>
+        <p>{article.description}</p>
+        <span>Read more...</span>
+      </a>
     </div>
-    <a href="/" className="preview-link">
-      <h1>{article.title}</h1>
-      <p>{article.description}</p>
-      <span>Read more...</span>
-    </a>
-  </div>
-);
+  );
+};

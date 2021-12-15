@@ -16,6 +16,11 @@ export function feedArticles(queryParameter?: PaginationParameter): Promise<Arti
     .then((response) => response.data.articles);
 }
 
+export function favoriteArticle(article: Article): Promise<Article> {
+  return axios.post<ArticleResponseDTO>(`/articles/${article.slug}/favorite`)
+    .then((response) => response.data.article);
+}
+
 interface ArticlesQueryParameter extends PaginationParameter{
   tag? : string,
   author?: string,
