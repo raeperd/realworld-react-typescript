@@ -1,9 +1,9 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
-import { Article } from '../../api/article';
+import { Article, favoriteArticle } from '../../api/article';
 import ArticleToggle from './ArticleToggle';
 
-describe('ArticleToggle', () => {
+describe('ArticleToggleNavBar', () => {
   test('when render expect to call onClickFeed', async () => {
     const handleClickFeedMock = jest.fn()
       .mockResolvedValueOnce([])
@@ -24,6 +24,23 @@ describe('ArticleToggle', () => {
     fireEvent.click(getByText('feed2'));
 
     expect(getByText(articleMocked.title)).toBeInTheDocument();
+  });
+});
+
+jest.mock('../../api/article');
+const favoriteArticleMock = favoriteArticle as jest.MockedFunction<typeof favoriteArticle>;
+
+describe('ArticlePreview', () => {
+  test('when click favorites expect to call favoriteArticle', async () => {
+    const handleClickFeedMock = jest.fn().mockResolvedValueOnce([articleMocked]);
+    favoriteArticleMock.mockResolvedValueOnce(articleMocked);
+    const { getByText } = render(<ArticleToggle feeds={['feed1']} onClickFeed={handleClickFeedMock} />);
+
+    await waitFor(() => fireEvent.click(getByText(articleMocked.favoritesCount)))
+      .then(() => {
+        expect(favoriteArticleMock).toHaveBeenCalledTimes(1);
+        expect(favoriteArticleMock).toHaveBeenCalledWith(articleMocked);
+      });
   });
 });
 
